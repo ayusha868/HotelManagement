@@ -8,15 +8,31 @@ package View;
  *
  * @author aayusharijal
  */
+import Controller.HotelController;
+import Model.ValidationException;
+import javax.swing.JOptionPane;
 public class Search extends javax.swing.JFrame {
-    
+    private HotelController controller;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Search.class.getName());
 
     /**
      * Creates new form Search
      */
     public Search() {
-        initComponents();
+        try {
+            controller = new HotelController();
+            initComponents();
+            this.setLocationRelativeTo(null);
+        } catch (ValidationException ex) {
+            JOptionPane.showMessageDialog(this, "Controller Error: " + ex.getMessage());
+        }
+    }
+    private void setupRoomTypes() {
+        choice1.removeAll(); // Clear default items if any
+        choice1.add("Standard Single");
+        choice1.add("Standard Double");
+        choice1.add("Deluxe");
+        choice1.add("Executive");
     }
 
     /**
@@ -35,6 +51,7 @@ public class Search extends javax.swing.JFrame {
         jButton8 = new javax.swing.JButton();
         jButton16 = new javax.swing.JButton();
         jButton17 = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
@@ -85,18 +102,34 @@ public class Search extends javax.swing.JFrame {
         jButton16.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jButton16.setForeground(new java.awt.Color(255, 255, 255));
         jButton16.setText("Customer Booking");
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton16ActionPerformed(evt);
+            }
+        });
 
         jButton17.setBackground(new java.awt.Color(0, 51, 102));
         jButton17.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jButton17.setForeground(new java.awt.Color(255, 255, 255));
         jButton17.setText("Search");
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setFont(new java.awt.Font("Hoefler Text", 0, 14)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("NOVA HOTEL");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton17, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton16)
@@ -114,7 +147,8 @@ public class Search extends javax.swing.JFrame {
                     .addComponent(jButton9)
                     .addComponent(jButton8)
                     .addComponent(jButton16)
-                    .addComponent(jButton17))
+                    .addComponent(jButton17)
+                    .addComponent(jLabel10))
                 .addGap(16, 16, 16))
         );
 
@@ -345,19 +379,43 @@ public class Search extends javax.swing.JFrame {
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+        jTextField4.setText("");
+        choice1.select(0);
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
+        new Login().setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
+        new AdminDashboard().setVisible(true); 
+        this.dispose();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
         // TODO add your handling code here:
+        String guestName = jTextField1.getText();
+        String roomType = choice1.getSelectedItem();
+        // Implement search logic via controller here
+        JOptionPane.showMessageDialog(this, "Searching for: " + guestName + " in " + roomType);
     }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jButton17ActionPerformed
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
+        // TODO add your handling code here:
+        new CustomerBooking().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton16ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -393,6 +451,7 @@ public class Search extends javax.swing.JFrame {
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

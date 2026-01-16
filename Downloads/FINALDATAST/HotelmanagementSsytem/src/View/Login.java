@@ -8,16 +8,94 @@ package View;
  *
  * @author aayusharijal
  */
+import Controller.HotelController;
+import Model.User;
+import Model.ValidationException;
+import javax.swing.JOptionPane;
+import java.util.logging.Level;
+
 public class Login extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Login.class.getName());
-
+    private HotelController controller; 
+    private String selectedRole = "";
     /**
      * Creates new form Login
      */
     public Login() {
-        initComponents();
+        try {
+            // Initialized inside try-catch to fix the "unreported exception" error
+            controller = new HotelController();
+            initComponents(); 
+            customInit();     
+        } catch (ValidationException ex) {
+            logger.log(Level.SEVERE, "Controller initialization failed", ex);
+            JOptionPane.showMessageDialog(this, "System Error: " + ex.getMessage());
+        }
+            
+            
     }
+    private void customInit() {
+        this.setLocationRelativeTo(null); // Centers window
+
+        // Admin Button (jButton1 from your variables list)
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectedRole = "Admin";
+                logger.info("Admin role selected.");
+            }
+        });
+
+        // User Button (jButton2 from your variables list)
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectedRole = "User";
+                logger.info("User role selected.");
+            }
+        });
+
+        // Log in Button (jButton3 from your variables list)
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                performLogin();
+            }
+        });
+    }
+    private void performLogin() {
+        String username = jTextField1.getText().trim();
+        String password = new String(jPasswordField1.getPassword());
+
+        if (selectedRole.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please select Admin or User first.");
+            return;
+        }
+
+        try {
+            User user = controller.login(username, password);
+
+            if (user != null && user.getUserType().equalsIgnoreCase(selectedRole)) {
+                JOptionPane.showMessageDialog(this, "Login Successful!");
+                
+                if (selectedRole.equals("Admin")) {
+                    new AdminDashboard().setVisible(true);
+                } else {
+                    new CustomerDashboard().setVisible(true);
+                }
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Role mismatch or invalid credentials.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Login Error: " + e.getMessage());
+        }
+    }
+    
+        
+        
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -73,7 +151,7 @@ public class Login extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(363, Short.MAX_VALUE)
+                .addContainerGap(72, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel2)
@@ -112,7 +190,7 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -127,11 +205,17 @@ public class Login extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(128, 128, 128)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(163, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(51, Short.MAX_VALUE))
         );
 
         pack();
@@ -141,6 +225,24 @@ public class Login extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+        // Standard Runnable as requested (No lambda)
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Login().setVisible(true);
+            }
+        });
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

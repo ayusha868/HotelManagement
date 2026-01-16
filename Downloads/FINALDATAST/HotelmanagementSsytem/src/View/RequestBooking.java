@@ -8,15 +8,29 @@ package View;
  *
  * @author aayusharijal
  */
+import Controller.HotelController;
+import Model.ValidationException;
+import javax.swing.JOptionPane;
 public class RequestBooking extends javax.swing.JFrame {
-    
+    private HotelController controller;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RequestBooking.class.getName());
 
     /**
      * Creates new form RequestBooking
      */
     public RequestBooking() {
-        initComponents();
+        try {
+            // Initializing the controller for data handling
+            controller = new HotelController();
+            initComponents();
+            postInit();
+        } catch (ValidationException ex) {
+            JOptionPane.showMessageDialog(this, "Controller Error: " + ex.getMessage());
+        }
+    }
+
+    private void postInit() {
+        this.setLocationRelativeTo(null); // Centers the form on screen
     }
 
     /**
@@ -88,6 +102,11 @@ public class RequestBooking extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Clear");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(0, 51, 102));
         jButton2.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
@@ -180,7 +199,35 @@ public class RequestBooking extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        String contactNumber = jTextField4.getText().trim();
+        String checkInDate = jTextField5.getText().trim();
+        String checkOutDate = jTextField6.getText().trim();
+
+        // Validation check for empty fields
+        if (contactNumber.isEmpty() || checkInDate.isEmpty() || checkOutDate.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all details (Contact, Check-in, and Check-out).");
+            return;
+        }
+
+        try {
+            // Success message for the user
+            JOptionPane.showMessageDialog(this, "Booking request submitted successfully!");
+            
+            // Navigate back to the Dashboard after submission
+            new CustomerDashboard().setVisible(true);
+            this.dispose();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error processing request: " + e.getMessage());
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        jTextField4.setText("");
+        jTextField5.setText("");
+        jTextField6.setText("");
+    
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
